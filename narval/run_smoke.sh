@@ -58,6 +58,7 @@ python train_spiral.py \
     --eval_top_p 0.95 \
     --eval_generate_max_length 2048 \
     --max_train $((STEPS * BATCH)) \
+    --save_path "${SAVE_PATH:-$SCRATCH/oat-output}" \
     --wb-run-name "$RUN_NAME"
     # CHECK: add --use-wb / --wb_project and your math-eval flags if the baseline used them.
     # CHECK: --eval_env_ids FrontierStrategy-v0 plays the model vs SPIRAL's RandomAgent
