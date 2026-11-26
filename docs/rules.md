@@ -21,7 +21,7 @@ the reference for `frontier/env.py`; if the two disagree, fix one of them.
 | --- | --- | --- |
 | `[road X]` | 1 wood | X is empty and orthogonally adjacent to your network (base + your roads + your settlements). |
 | `[claim X]` | 1 stone + 1 food | X holds your own road; it becomes a settlement. |
-| `[upgrade X]` | 2 stone + 1 wood | X is your settlement (base included) and not yet upgraded. +1 point; it then produces 2 instead of 1. |
+| `[upgrade X]` | 2 stone + 1 wood | X is one of your claimed settlements (not your base) and not yet upgraded. +1 point; it then produces 2 instead of 1. |
 | `[pass]` | — | Always legal. |
 
 - A cell has at most one owner. You cannot build on, or extend through, the opponent's cells.
@@ -123,20 +123,23 @@ uses the global RNG, so that has no effect on the game.
 
 | Matchup (P0 vs P1) | P0 win | P1 win | Draw | Mean score | Notes |
 | --- | ---: | ---: | ---: | --- | --- |
-| random vs random | 40.2% | 42.1% | 17.7% | 3.42 / 3.43 | 34% of turns have only `[pass]` legal |
-| greedy vs random | 0.0% | 59.9% | 40.1% | 2.00 / 3.36 | greedy is stuck at 2 points |
-| builder vs random | 83.8% | 15.6% | 0.6% | 5.60 / 3.33 | |
+| random vs random | 48.0% | 46.1% | 5.9% | 4.33 / 4.30 | |
+| greedy vs random | 62.9% | 35.2% | 1.9% | 4.87 / 4.42 | |
+| builder vs random | 70.1% | 28.1% | 1.8% | 5.61 / 4.43 | |
+| builder vs greedy | 56.2% | 42.0% | 1.8% | 5.61 / 4.99 | |
 | builder vs builder | 49.9% | 48.8% | 1.3% | 5.61 / 5.65 | |
+
+These are after making bases un-upgradable. Before that change, greedy won 0% against
+random (it upgraded its base in round 1, spent all its stone, and was stuck at 2 points).
 
 Starts A1/D4 with random vs random gave 35.9 / 34.5 / 29.6% draws, so B2/C3 is kept.
 
 **Open design questions for the team**
 
-1. *The "greedy" player from the plan never beats random.* Its best immediate move in
-   round 1 is upgrading its base (+1 point), which spends all its stone. Bases never
-   produce, so it can never claim again and finishes at 2 points every game. Either
-   accept that the base upgrade is a deliberate trap (it does test planning), or make
-   bases unupgradable / producing.
+1. *Resolved: bases cannot be upgraded.* Upgrading the base used to give +1 point but
+   spent all the starting stone, and since bases never produce, that player could never
+   claim again. Now only claimed (producing) tiles can be upgraded, so choosing which
+   tile to upgrade depends on its production chance. Greedy now beats random ~63%.
 2. *The economy is tight.* With random play, a third of turns allow only `[pass]`, and
    the board fills in under 1% of games. So "round the board fills up" is not a useful
    metric yet, and blocking rarely matters. Consider more starting resources or

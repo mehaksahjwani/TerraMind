@@ -73,13 +73,13 @@ def test_same_seed_same_board_different_seed_differs():
 @pytest.mark.parametrize("kind,cell,setup,expected", [
     ("road", "B3", None, {"wood": 2, "stone": 2, "food": 3}),
     ("claim", "B3", "road", {"wood": 3, "stone": 1, "food": 2}),
-    ("upgrade", "B2", None, {"wood": 2, "stone": 0, "food": 3}),
+    ("upgrade", "B3", "settlement", {"wood": 2, "stone": 0, "food": 3}),
     ("pass", None, None, {"wood": 3, "stone": 2, "food": 3}),
 ])
 def test_action_costs(kind, cell, setup, expected):
     g = blank_game()
-    if setup == "road":
-        set_tile(g, "B3", owner=0, building="road")
+    if setup in ("road", "settlement"):
+        set_tile(g, "B3", owner=0, building=setup)
     g.apply(0, kind, cell)
     assert g.inventory(0) == expected
 
@@ -112,12 +112,22 @@ def test_unaffordable_actions_rejected_and_not_listed():
 def test_upgrade_only_once_and_only_own_settlements():
     g = blank_game()
     g.inventory(0).update(stone=10, wood=10)
-    g.apply(0, "upgrade", "B2")
+    set_tile(g, "B3", owner=0, building="settlement")
+    g.apply(0, "upgrade", "B3")
     g.apply(1, "pass", None)
     with pytest.raises(ValueError, match="already upgraded"):
-        g.apply(0, "upgrade", "B2")
+        g.apply(0, "upgrade", "B3")
     with pytest.raises(ValueError, match="not one of your settlements"):
         g.apply(0, "upgrade", "C3")
+
+
+def test_base_cannot_be_upgraded():
+    g = blank_game()
+    g.inventory(0).update(stone=10, wood=10)
+    assert ("upgrade", "B2") not in g.legal_actions(0)
+    with pytest.raises(ValueError, match="base cannot be upgraded"):
+        g.apply(0, "upgrade", "B2")
+    assert not g.board["B2"]["upgraded"] and g.inventory(0)["stone"] == 10
 
 
 def test_claim_requires_own_road():

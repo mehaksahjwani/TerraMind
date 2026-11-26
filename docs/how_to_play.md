@@ -59,8 +59,8 @@ You start with **3 wood, 2 stone, 3 food**.
 ## A few tips
 
 - Stone is scarce: you start with only 2, and both claiming and upgrading need it.
-- Upgrading your base gives a quick point, but bases never produce. That stone can't
-  then pay for a claim.
+- Your base can't be upgraded. Save stone to claim tiles, then upgrade your best
+  (highest-chance) tile so it produces 2 instead of 1.
 - Claim early. A 70% tile claimed in round 2 gets 8 rolls; claimed in round 8, only 2.
 - A cheap road on a tile your opponent wants can cut off their expansion.
 

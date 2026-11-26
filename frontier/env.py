@@ -209,7 +209,8 @@ class FrontierGame:
         if self.can_afford(pid, "claim"):
             acts += [("claim", c) for c in self.owned(pid, "road")]
         if self.can_afford(pid, "upgrade"):
-            acts += [("upgrade", c) for c in self.owned(pid, "settlement") if not self.board[c]["upgraded"]]
+            acts += [("upgrade", c) for c in self.owned(pid, "settlement")
+                     if not self.board[c]["upgraded"] and self.board[c]["terrain"] != "start"]
         acts.append(("pass", None))
         return acts
 
@@ -240,6 +241,8 @@ class FrontierGame:
         if kind == "upgrade":
             if tile["owner"] != pid or tile["building"] != "settlement":
                 return f"{cell} is not one of your settlements."
+            if tile["terrain"] == "start":
+                return "Your base cannot be upgraded; only claimed tiles can."
             if tile["upgraded"]:
                 return f"{cell} is already upgraded."
             return None
